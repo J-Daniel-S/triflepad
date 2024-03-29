@@ -67,13 +67,16 @@ public class TextView {
 	
 	private static void setText() {
 		doc = getText();
-		field.setText(doc);
+		String[] lines = doc.split("\\n");
+		for (String line: lines) {
+			field.appendText(line + "\n");
+		}
 	}
 	
 	public static void setup() {
 		createFile();
 		setText();
-		listenForInput();
+//		listenForInput();
 	}
 
 }
