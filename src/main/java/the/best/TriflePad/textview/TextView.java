@@ -1,82 +1,51 @@
 package the.best.TriflePad.textview;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-
+import javafx.geometry.Insets;
 import javafx.scene.control.TextArea;
-import the.best.TriflePad.TriflePad;
 
 public class TextView {
 	
-	static TextArea field = TriflePad.field;
 	static String PATH = "src/main/resources/textFile.txt";
 	static String doc = "";
+	private TextArea field;
 	
-	private TextView() {}
 	
-	private static void listenForInput() {
-		StringBuilder fileText = new StringBuilder();
-		fileText.append(getText());
+	public TextView() {
+		field = new TextArea();
+		initArea();
+	}
+	
+	private void initArea() {
+		field.setStyle("-fx-font-size: 14px;");
+    	field.maxHeight(Long.MAX_VALUE);
+    	field.maxWidth(Long.MAX_VALUE);
+    	field.setPadding(new Insets(5));
+    	pinScrollbarOnResize();
+	}
+	
+	public TextArea get() {
+		return field;
+	}
+	
+	public void appendText(String text) {
+		field.appendText(text);
+	}
+	
+	private void pinScrollbarOnResize() {
+		field.widthProperty().addListener((obs, oldVal, newVal) -> {
+			field.setScrollLeft(0);
+		});
 		
-		field.setOnKeyPressed(e -> {
-			StringBuilder text = new StringBuilder();
-			
-			text.append(doc).append(e.getText());
-			field.setText(text.toString());
-			doc = text.toString();
-			writeToFile(text.toString());
-			
+		field.heightProperty().addListener((obs, oldVal, newVal) -> {
+			field.setScrollTop(Long.MAX_VALUE);
 		});
 	}
 	
-	private static void writeToFile(String input) {
-		try (BufferedWriter w = new BufferedWriter(new FileWriter(PATH, false))) {
-			w.write(input);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private static String getText() {
-		StringBuilder text = new StringBuilder();
-
-		try (BufferedReader r = new BufferedReader(new FileReader(PATH))) {
-			String line;
-			while((line = r.readLine()) != null) {
-				text.append(line);
-			}
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return text.toString();
-	}
-	
-	private static void createFile() {
-		File file = new File(PATH);
-		try {
-			file.createNewFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private static void setText() {
-		doc = getText();
-		String[] lines = doc.split("\\n");
-		for (String line: lines) {
-			field.appendText(line + "\n");
-		}
-	}
-	
-	public static void setup() {
-		createFile();
-		setText();
-//		listenForInput();
-	}
-
+//	private static void writeToFile(String input) {
+//		try (BufferedWriter w = new BufferedWriter(new FileWriter(PATH, false))) {
+//			w.write(input);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 }
