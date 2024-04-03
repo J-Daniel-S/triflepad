@@ -1,0 +1,17 @@
+.root {
+    -fx-font-family: monospace;
+    -fx-font-size: 14px;
+}
+
+.text-area {
+    -fx-padding: 0 5 0 5;
+}
+
+.line-number-box {
+    -fx-padding: 5 5 0 5;
+    -fx-alignment: TOP-RIGHT;
+}
+
+.line-number {
+    -fx-padding: 0 5 0 0
+}

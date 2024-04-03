@@ -1,12 +1,11 @@
 package the.best.TriflePad.textdocument;
 
-import static the.best.TriflePad.TriflePad.field;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
+
+import javafx.scene.control.TextArea;
 
 public class TextDocument {
 
@@ -15,13 +14,16 @@ public class TextDocument {
 	private StringBuilder buffer;
 	private long[] lineBuffer;
 	private String filePath;
+	private TextArea field;
 
-	public TextDocument(String filePath) {
-
+	public TextDocument(String filePath, TextArea area) {
+		this.filePath = filePath;
+		this.field = area;
 	}
 
-	public TextDocument() {
+	public TextDocument(TextArea area) {
 		this.filePath = "src/main/resources/textFile.txt";
+		this.field = area;
 	}
 	
 	public boolean setup() {
@@ -31,7 +33,13 @@ public class TextDocument {
 	public long lineCount() {
 		return lines;
 	}
+	
+	// perhaps this ought not be
+	public String[] getLines() {
+		return buffer.toString().split("\n");
+	}
 
+	// do I need this?
 	public long getLine(int lineNum, StringBuilder buf, int len) {
 
 		long lineLength;
@@ -75,15 +83,16 @@ public class TextDocument {
 		
 		if ((lineBuffer = countLines(file)).length == 0)
 			return false;
+
+		try {
+			buffer = new StringBuilder((int) Math.min(length, Integer.MAX_VALUE));
+		} catch (OutOfMemoryError | IllegalArgumentException e) {
+			e.printStackTrace();
+			return false;
+		}
 		
 		try (BufferedReader r = new BufferedReader(new FileReader(file.getPath()))) {
 
-			try {
-				buffer = new StringBuilder((int) Math.min(length, Integer.MAX_VALUE));
-			} catch (OutOfMemoryError | IllegalArgumentException e) {
-				e.printStackTrace();
-				return false;
-			}
 
 			// populate buffer and store values in lineBuffer: each line (index) begins with char# value
 			String line;
@@ -96,17 +105,23 @@ public class TextDocument {
 			}
 			
 			lineBuffer[lines -1] = length;
-			paintText();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
 		}
 
-		// this method is rendered redundant by rewrites... I think
-//		initializeLineBuffer(capacity);
+		field.appendText(buffer.toString());
 		return true;
 		
+	}
+	
+	public void updateBuffer(String newValue) {
+		//TODO add write to file
+		buffer.delete(0, buffer.length());
+		buffer.append(newValue);
+		lines = getLines().length;
+		this.length = newValue.length();
 	}
 
 	private long[] countLines(File file) {
@@ -139,51 +154,6 @@ public class TextDocument {
 			e.printStackTrace();
 		}
 		return length;
-	}
-
-	private void paintText() {
-		field.appendText(buffer.toString());
-	}
-
-	// this method appears superfluous
-	private boolean initializeLineBuffer(int length) {
-		try {
-			int i = 0;
-			long lineStart = 0;
-//			lineBuffer = new long[lines];
-
-			if (lineBuffer.length == 0)
-				return false;
-			
-			Arrays.stream(lineBuffer).forEach(System.out::println);
-
-//			int numLines = 0;
-//			for (i = 0; i < buffer.length(); i++) {
-//				if (buffer.charAt(i) == '\r') {
-//					// carriage return / line-feed combination
-//					if (buffer.charAt(++i) == '\n')
-//						i++;
-//
-//					// record where the line starts
-//					lineBuffer[numLines++] = lineStart;
-//					lineStart = i;
-//
-//				}
-//			}
-
-//			lineBuffer[numLines] = length;
-//			System.out.println(numLines);
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-
-	}
-
-	public StringBuilder getBuffer() {
-		// for now we share this but it should probably not be accessible to the outside
-		return buffer;
 	}
 
 }
