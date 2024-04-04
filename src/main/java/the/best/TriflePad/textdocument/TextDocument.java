@@ -21,9 +21,9 @@ public class TextDocument {
 		this.field = area;
 	}
 
-	public TextDocument(TextArea area) {
+	public TextDocument(TextArea textArea) {
 		this.filePath = "src/main/resources/textFile.txt";
-		this.field = area;
+		this.field = textArea;
 	}
 	
 	public boolean setup() {
@@ -119,7 +119,7 @@ public class TextDocument {
 	public void updateBuffer(String newValue) {
 		//TODO add write to file
 		buffer.delete(0, buffer.length());
-		buffer.append(newValue);
+		buffer.append(newValue).append('\n').append('\n').append('\n').append('\n');
 		lines = getLines().length;
 		this.length = newValue.length();
 	}

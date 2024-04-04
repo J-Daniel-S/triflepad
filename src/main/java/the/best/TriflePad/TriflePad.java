@@ -20,6 +20,7 @@ public class TriflePad extends Application {
         stage.setTitle("TriflePad");
         stage.getIcons().add(new Image("pie.png"));
         stage.show();
+//        field.resetScroll();
         
     }
 
